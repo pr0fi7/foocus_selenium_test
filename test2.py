@@ -18,7 +18,7 @@ def upload_to_fileio(image_path):
         print(f"Failed to upload image to file.io. Status code: {response.status_code}")
         print(f"Response: {response.text}")
         raise Exception("Failed to upload image to file.io")
-
+    
 def create_mask(image):
     mp_face_mesh = mp.solutions.face_mesh
     face_mesh = mp_face_mesh.FaceMesh(static_image_mode=True, max_num_faces=10)
@@ -51,8 +51,8 @@ def create_mask(image):
             source = landmarks.landmark[source_idx]
             target = landmarks.landmark[target_idx]
 
-            relative_source = (int(image.shape[1] * source.x), int(image.shape[0] * source.y))
-            relative_target = (int(image.shape[1] * target.x), int(image.shape[0] * target.y))
+            relative_source = (int(image.shape[1] * source.x+5), int(image.shape[0] * source.y))
+            relative_target = (int(image.shape[1] * target.x+5), int(image.shape[0] * target.y))
 
             routes.append(relative_source)
             routes.append(relative_target)
@@ -63,9 +63,9 @@ def create_mask(image):
 
 
 output = replicate.run(
-    "konieshadow/fooocus-api-realistic:612fd74b69e6c030e88f6548848593a1aaabe16a09cb79e6d714718c15f37f47",
+    "konieshadow/fooocus-api-realistic:8958d6f677f825b57175bf644471fddfee6210a165cc20037323575a84d16afb",
     input={
-        "prompt": "happy family with teens wearing T-shirts, mobile phones, orange color",
+        "prompt": "happy family with teens, dressed in the style of the 70s, sitting at the table, natural lighting, half length shot, high quality photo --ar 3:2 --v 5",
         "cn_type1": "ImagePrompt",
         "cn_type2": "ImagePrompt",
         "cn_type3": "ImagePrompt",
@@ -76,7 +76,7 @@ output = replicate.run(
         "image_number": 1,
         "guidance_scale": 3,
         "refiner_switch": 0.5,
-        "negative_prompt": "unrealistic, saturated, high contrast, big nose, painting, drawing, sketch, cartoon, anime, manga, render, CG, 3d, watermark, signature, label",
+        "negative_prompt": "(((hands))),(easynegative), (badv2:0.8), (badhandv4:1.18), (bad quality:1.4), (low quality, worst quality:1.14), (watermark), (blurry), (cropped), (nsfw:1.18), (cleavage:1.18), unrealistic, saturated, high contrast, big nose, painting, drawing, sketch, cartoon, anime, manga, render, CG, 3d, watermark, signature, label",
         "style_selections": "Fooocus V2,Fooocus Photograph,Fooocus Negative",
         "uov_upscale_value": 0,
         "outpaint_selections": "",
@@ -114,7 +114,7 @@ except Exception as e:
     exit(1)
 
 output = replicate.run(
-    "konieshadow/fooocus-api-realistic:612fd74b69e6c030e88f6548848593a1aaabe16a09cb79e6d714718c15f37f47",
+    "konieshadow/fooocus-api-realistic:8958d6f677f825b57175bf644471fddfee6210a165cc20037323575a84d16afb",
     input={
         "prompt": "",
         "cn_type1": "ImagePrompt",
@@ -139,9 +139,10 @@ output = replicate.run(
         "aspect_ratios_selection": "1152*896",
         "outpaint_distance_right": 0,
         "outpaint_distance_bottom": 0,
-        "inpaint_additional_prompt": "detailed face"
+        "inpaint_additional_prompt": "highly detailed face"
     }
 )
+
 url2 = output[0]
 print(url2)
 
